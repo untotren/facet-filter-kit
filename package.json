@@ -1,1 +1,27 @@
-{"name":"facet-filter-kit","version":"0.1.0","type":"module","private":false}
+{
+  "name": "facet-filter-kit",
+  "version": "0.1.0",
+  "type": "module",
+  "private": false,
+  "description": "Dependency-free, framework-free faceted filtering ES module with accessible controls and round-trippable URL state.",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/facetFilter.js",
+  "exports": {
+    ".": "./src/facetFilter.js",
+    "./styles.css": "./styles/facet-filter.css"
+  },
+  "files": [
+    "src",
+    "styles"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "fixture": "node scripts/generate-fixture.js"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
+  }
+}

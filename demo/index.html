@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>facetFilter demo</title>
+  <link rel="stylesheet" href="../styles/facet-filter.css">
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0; font: 16px/1.45 system-ui, sans-serif; }
+    main { display: grid; gap: 1.5rem; max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem; }
+    @media (min-width: 52rem) { main { grid-template-columns: 20rem 1fr; align-items: start; } }
+    h1 { grid-column: 1 / -1; margin: 0; font-size: 1.5rem; }
+    .results { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+    .results li { padding: 0.5rem 0.75rem; border: 1px solid #c4c8d066; border-radius: 6px; }
+    .results small { display: block; opacity: 0.75; }
+    noscript { grid-column: 1 / -1; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Curio catalogue</h1>
+    <noscript>This demo needs JavaScript and must be served over HTTP (see README).</noscript>
+    <div id="filters"></div>
+    <section aria-labelledby="results-heading">
+      <h2 id="results-heading">Results</h2>
+      <ul class="results" id="results"></ul>
+    </section>
+  </main>
+  <script type="module">
+    import { createFilter, mount } from '../src/facetFilter.js';
+    import items from '../fixtures/items.js';
+    import schema from '../fixtures/schema.js';
+
+    const byId = new Map(items.map((item) => [item.id, item]));
+    const list = document.getElementById('results');
+    const filter = createFilter(items, schema);
+
+    function renderResults(ids) {
+      const fragment = document.createDocumentFragment();
+      for (const id of ids) {
+        const item = byId.get(id);
+        const li = document.createElement('li');
+        const meta = document.createElement('small');
+        li.textContent = item.title;
+        meta.textContent = `${item.fields.category} · ${item.fields.region} · ${item.fields.price.toFixed(2)} credits · ` +
+          `rated ${item.fields.rating} · ${item.fields.year} · ${item.tags.join(', ')}`;
+        li.append(meta);
+        fragment.append(li);
+      }
+      list.replaceChildren(fragment);
+    }
+
+    mount(document.getElementById('filters'), filter, {
+      state: location.search,
+      onChange({ ids, query }) {
+        renderResults(ids);
+        const url = `${location.pathname}${query ? `?${query}` : ''}${location.hash}`;
+        history.replaceState(null, '', url);
+      },
+    });
+  </script>
+</body>
+</html>
